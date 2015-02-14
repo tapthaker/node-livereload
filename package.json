@@ -6,11 +6,11 @@
   ]
 , "licenses": [
   { "type": "MIT"
-  , "url": "https://github.com/napcs/node-livereload/blob/master/LICENSE"
+  , "url": "https://github.com/thegreatloser/node-livereload/blob/master/LICENSE"
   }]
 , "repository":
   { "type": "git"
-  , "url": "http://github.com/napcs/node-livereload.git"
+  , "url": "http://github.com/thegreatloser/node-livereload.git"
   }
 , "bin": { "livereload": "./bin/livereload.js" }
 , "main": "./lib/livereload.js"

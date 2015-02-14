@@ -101,7 +101,7 @@ class Server
           @refresh filename if curr.mtime > prev.mtime
 
   refresh: (path) ->
-    @config.handler(path)
+    @config.compileHandler(path)
     @debug "Refresh: #{path}"
     data = JSON.stringify ['refresh',
       path: path,

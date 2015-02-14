@@ -74,6 +74,15 @@ describe 'livereload http file serving', ->
 
       done()
 
+  it 'should call the compileHandler' , (done) ->
+    filePath = "xxx/yyy/zzz"
+    compileHandler = (path) ->
+      should(path).be.equal(filePath)
+      done()
+
+    server = livereload.createServer(port: 35729,compileHandler:compileHandler)
+    server.refresh(filePath)
+
 describe 'livereload file watching', ->
 
   it 'should correctly watch common files', ->
