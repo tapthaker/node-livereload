@@ -36,6 +36,7 @@ class Server
     @config.overrideURL ?= ''
 
     @config.interval ?= 1000
+    @config.compileHandler ?= (filePath) -> {}
 
     @sockets = []
 
@@ -100,6 +101,7 @@ class Server
           @refresh filename if curr.mtime > prev.mtime
 
   refresh: (path) ->
+    @config.handler(path)
     @debug "Refresh: #{path}"
     data = JSON.stringify ['refresh',
       path: path,
