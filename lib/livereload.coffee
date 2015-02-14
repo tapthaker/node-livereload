@@ -101,19 +101,21 @@ class Server
           @refresh filename if curr.mtime > prev.mtime
 
   refresh: (path) ->
-    @config.compileHandler(path)
-    @debug "Refresh: #{path}"
-    data = JSON.stringify ['refresh',
-      path: path,
-      apply_js_live: @config.applyJSLive,
-      apply_css_live: @config.applyCSSLive,
-      apply_img_live: @config.applyImgLive,
-      original_path: this.config.originalPath,
-      override_url: this.config.overrideURL
-    ]
+    compilerResponse = @config.compileHandler(path)
+    compilerResponse ?= {}
+    if(compilerResponse.success is true)
+      @debug "Refresh: #{compilerResponse.outputFilePath}"
+      data = JSON.stringify ['refresh',
+        path: compilerResponse.outputFilePath,
+        apply_js_live: @config.applyJSLive,
+        apply_css_live: @config.applyCSSLive,
+        apply_img_live: @config.applyImgLive,
+        original_path: this.config.originalPath,
+        override_url: this.config.overrideURL
+      ]
 
-    for socket in @sockets
-      socket.send data
+      for socket in @sockets
+        socket.send data
 
   debug: (str) ->
     if @config.debug

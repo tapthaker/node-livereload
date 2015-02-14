@@ -77,11 +77,65 @@ describe 'livereload http file serving', ->
   it 'should call the compileHandler' , (done) ->
     filePath = "xxx/yyy/zzz"
     compileHandler = (path) ->
-      should(path).be.equal(filePath)
+      path.should.equal(filePath)
       done()
+      debugger;
 
     server = livereload.createServer(port: 35729,compileHandler:compileHandler)
     server.refresh(filePath)
+    server.config.server.close()
+
+  it 'should send message to client if compileHandler succeeded' , (done) ->
+    filePath ='xxx/yyy/zzz.coffee'
+    compiledPath=filePath.replace('.coffee','.js')
+    compileHandler = (path) ->
+      return {success:true,outputFilePath:compiledPath}
+
+    server = livereload.createServer(port: 35729,compileHandler:compileHandler)
+
+
+    ws = new WebSocket('ws://localhost:35729/livereload')
+    ws.on 'message', (data, flags) ->
+      message
+      try
+        message = JSON.parse data
+        if message[0] is 'refresh'
+          message[1].path.should.equal(compiledPath)
+          server.config.server.close();
+          done()
+      catch
+
+    refresh = ->
+      server.refresh(filePath,compileHandler)
+
+    setTimeout(refresh,100)
+
+  it 'should not send message to client if compileHandler failed' , (done) ->
+    compileHandler = (path) ->
+    refreshCalled = false
+    server = livereload.createServer(port: 35729,compileHandler:compileHandler)
+
+
+    ws = new WebSocket('ws://localhost:35729/livereload')
+    ws.on 'message', (data, flags) ->
+      message
+      try
+        message = JSON.parse data
+        if message[0] is 'refresh'
+          refreshCalled = true
+      catch
+
+    refresh = ->
+      server.refresh('',compileHandler)
+
+    testPass = ->
+      refreshCalled.should.equal(false)
+      server.config.server.close();
+      done();
+
+    setTimeout(refresh,100)
+    setTimeout(testPass,200)
+
 
 describe 'livereload file watching', ->
 
