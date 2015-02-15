@@ -99,9 +99,3 @@ class TerminalInteraction
 
   start: ->
     this.screen.render()
-
-
-
-
-terminalInteraction = new TerminalInteraction()
-terminalInteraction.start()
