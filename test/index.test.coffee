@@ -85,7 +85,6 @@ describe 'livereload http file serving', ->
     ws = new WebSocket('ws://localhost:35729/livereload')
     ws.on 'message', (data, flags) ->
       message = JSON.parse data
-      debugger;
       if message.command is 'refresh'
         message.path.should.equal(compiledPath)
         server.config.server.close();
