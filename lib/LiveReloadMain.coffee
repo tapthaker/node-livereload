@@ -5,7 +5,7 @@ livereload = require('../lib/livereload.coffee');
 
 
 exports.LiveReloadMain  =
-  class  LiveReloadMain extends Interaction
+  class  LiveReloadMain
     constructor: (@options) ->
       @autoReload = off
 
@@ -17,7 +17,6 @@ exports.LiveReloadMain  =
 
       @server = livereload.createServer({applyJSLive:true,debug:true,compileHandler:compileHandler});
       @server.watch(@options.path);
-
 
       interaction = new Interaction(this)
       terminalInteraction = new TerminalInteraction(interaction)
