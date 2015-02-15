@@ -103,6 +103,7 @@ class Server
           @refresh filename if curr.mtime > prev.mtime
 
   refresh: (path) ->
+    debugger;
     compilerResponse = @config.compileHandler(path)
     compilerResponse ?= {}
     if(compilerResponse.success is true)

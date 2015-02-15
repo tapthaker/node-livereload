@@ -8,9 +8,13 @@ exports.LiveReloadMain  =
   class  LiveReloadMain
     constructor: (@options) ->
       @autoReload = off
+      @options ?= {}
+      @options.compileHandler ?= (path)->
+        return {success:true,outputFilePath:path}
 
     startServer: ->
-      compileHandler = (path) ->
+
+      compileHandler = (path) =>
         console.log("Attempting to compile: " + path);
         result = @options.compileHandler(path);
         result.success =  result.success && @autoReload;
@@ -22,8 +26,8 @@ exports.LiveReloadMain  =
       terminalInteraction = new TerminalInteraction(interaction)
       terminalInteraction.start();
 
-    console.log = (text) ->
-      terminalInteraction.showLog(text)
+      console.log = (text) ->
+        terminalInteraction.showLog(text)
 
     setAutoReloadOn: ->
       @autoReload = on;
@@ -32,6 +36,7 @@ exports.LiveReloadMain  =
       @autoReload = off;
 
     injectJS: (javascriptString) ->
+      debugger;
       @server.injectJS(javascriptString)
 
     reloadNow: ->

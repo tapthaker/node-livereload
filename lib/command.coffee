@@ -1,6 +1,6 @@
 runner = ->
 
-  livereload = require './livereload'
+  liveReload = require './LiveReloadMain.coffee'
   resolve    = require('path').resolve
   opts       = require 'opts'
 
@@ -24,13 +24,13 @@ runner = ->
   port = opts.get('port') || 35729
   interval = opts.get('interval') || 1000
 
-  server = livereload.createServer({port: port, interval: interval, debug: true})
-
   path = resolve(process.argv[2] || '.')
+
+  liveReloadMain = new liveReload.LiveReloadMain({path:path})
 
   console.log "Starting LiveReload for #{path} on port #{port}."
 
-  server.watch(path)
+  liveReloadMain.startServer()
 
   console.log "Polling for changes every #{interval}ms."
 

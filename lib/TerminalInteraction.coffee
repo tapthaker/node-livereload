@@ -14,8 +14,9 @@ class TerminalInteraction
     this.consoleLogger = setupConsoleLogger()
     this.screen.append(this.consoleLogger)
     fileManager = setupFileManager process.env.HOMEPATH, (file) ->
-      @showLog("Injecting file #{file}")
-      this.interaction.sendEvent('inject',fs.readFileSync(file))
+      debugger;
+      console.log("Injecting file #{file}")
+      interaction.sendEvent('inject',fs.readFileSync(file))
     fileManager.focus()
     this.screen.append(fileManager)
 
