@@ -12,8 +12,8 @@
   { "type": "git"
   , "url": "http://github.com/thegreatloser/node-livereload.git"
   }
-, "bin": { "livereload": "./bin/livereload.js" }
-, "main": "./lib/livereload.js"
+, "bin": { "livereload": "./bin/livereload.coffee" }
+, "main": "./lib/LiveReloadMain.coffee"
 , "dependencies": {
     "opts": ">= 1.2.0",
     "websocket.io": ">= 0.1.0",

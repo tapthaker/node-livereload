@@ -1121,7 +1121,7 @@
 
   CustomEvents = require('./customevents');
 
-  LiveReload = window.LiveReload = new (require('./livereload').LiveReload)(window);
+  LiveReload = window.LiveReload = new (require('./../bin/livereload').LiveReload)(window);
 
   for (k in window) {
     if (k.match(/^LiveReloadPlugin/)) {
