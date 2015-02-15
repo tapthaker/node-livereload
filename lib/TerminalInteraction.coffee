@@ -2,20 +2,20 @@
 blessed = require('blessed');
 fs = require 'fs'
 
+exports.TerminalInteraction =
+
 class TerminalInteraction
   autoReload = false
-
-  constructor: (@interaction)->
+  constructor: (interaction)->
     this.screen = blessed.screen();
     this.screen.title = 'Live Reload';
-    debugger;
     bottomStatusBar = setupBottomStatusBar()
     this.screen.append(bottomStatusBar)
-    consoleLogger = setupConsoleLogger()
-    this.screen.append(consoleLogger)
+    this.consoleLogger = setupConsoleLogger()
+    this.screen.append(this.consoleLogger)
     fileManager = setupFileManager process.env.HOMEPATH, (file) ->
-      consoleLogger.setContent(consoleLogger.content + '\n' + fs.readFileSync(file))
-      this.screen.render()
+      @showLog("Injecting file #{file}")
+      this.interaction.sendEvent('inject',fs.readFileSync(file))
     fileManager.focus()
     this.screen.append(fileManager)
 
@@ -23,13 +23,19 @@ class TerminalInteraction
       autoReload = !autoReload
       bottomStatusBar.setContent(getContentText())
       this.screen.render()
-      @interaction.sentEvent('key-press',key)
+      interaction.sendEvent('key-press','a')
 
     this.screen.key ['r', 'R'], (ch, key)->
-      @interaction.sendEvent('key-press',key)
+      interaction.sendEvent('key-press','r')
 
     this.screen.key ['escape', 'q', 'C-c'],  ->
       process.exit(0);
+
+
+  showLog:(text) ->
+    this.consoleLogger.setContent(this.consoleLogger.content + '\n' + text)
+    this.screen.render();
+
 
 
   setupBottomStatusBar = ->

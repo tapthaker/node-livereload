@@ -1,13 +1,13 @@
 
 exports.Interaction = class Interaction
-  autoReload = false
-  constructor: (@interactionHandler) ->
 
+  constructor: (@interactionHandler) ->
+    @autoReload = false
   sendEvent: (eventName,value) ->
     if 'key-press' is eventName and (value is 'A' || value is 'a')
-      autoReload = !autoReload
-      if(autoReload) then return @interactionHandler.setAutoReloadOn() else return @interactionHandler.setAutoReloadOff()
+      @autoReload = !@autoReload
+      if(autoReload) then  @interactionHandler.setAutoReloadOn() else  @interactionHandler.setAutoReloadOff()
     else if 'key-press' is eventName and (value is 'r' || value is 'R')
-      return @interactionHandler.reloadNow()
+       @interactionHandler.reloadNow()
     else if 'inject' is eventName
-      return @interactionHandler.injectJS(value)
+       @interactionHandler.injectJS(value)

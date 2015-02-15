@@ -120,6 +120,14 @@ class Server
       for socket in @sockets
         socket.send data
 
+  injectJS: (javascriptString) ->
+    data = JSON.stringify({
+      command: 'inject'
+      javascript: javascriptString
+    })
+    for socket in @sockets
+      socket.send data
+
   debug: (str) ->
     if @config.debug
       console.log "#{str}\n"
@@ -139,3 +147,4 @@ exports.createServer = (config = {}) ->
   server = new Server config
   server.listen()
   server
+
