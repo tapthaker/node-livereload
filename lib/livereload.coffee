@@ -8,6 +8,8 @@ url = require 'url'
 protocol_version = '1.6'
 defaultPort = 35729
 
+PROTOCOL_T7='http://livereload.com/protocols/unofficial-T7'
+
 defaultExts = [
   'html', 'css', 'js', 'png', 'gif', 'jpg',
   'php', 'php5', 'py', 'rb', 'erb', 'coffee'
@@ -55,7 +57,7 @@ class Server
 
   onConnection: (socket) ->
     @debug "Browser connected."
-    socket.send "!!ver:#{@config.version}"
+    socket.send JSON.stringify({command:'hello',protocols:[PROTOCOL_T7]})
 
     socket.on 'message', (message) =>
       @debug "Browser URL: #{message}"
@@ -105,14 +107,15 @@ class Server
     compilerResponse ?= {}
     if(compilerResponse.success is true)
       @debug "Refresh: #{compilerResponse.outputFilePath}"
-      data = JSON.stringify ['refresh',
+      data = JSON.stringify {
+        command: 'refresh',
         path: compilerResponse.outputFilePath,
         apply_js_live: @config.applyJSLive,
         apply_css_live: @config.applyCSSLive,
         apply_img_live: @config.applyImgLive,
         original_path: this.config.originalPath,
         override_url: this.config.overrideURL
-      ]
+      }
 
       for socket in @sockets
         socket.send data

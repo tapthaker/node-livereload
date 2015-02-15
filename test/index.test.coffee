@@ -23,17 +23,6 @@ describe 'livereload http file serving', ->
 
       done()
 
-  it 'should connect to the websocket server', (done) ->
-    server = livereload.createServer({port: 35729})
-
-    ws = new WebSocket('ws://localhost:35729/livereload')
-    ws.on 'message', (data, flags) ->
-      data.should.equal '!!ver:1.6'
-
-      server.config.server.close()
-
-      done()
-
   it 'should allow you to override the internal http server', (done) ->
     app = http.createServer (req, res) ->
       if url.parse(req.url).pathname is '/livereload.js'
@@ -79,7 +68,6 @@ describe 'livereload http file serving', ->
     compileHandler = (path) ->
       path.should.equal(filePath)
       done()
-      debugger;
 
     server = livereload.createServer(port: 35729,compileHandler:compileHandler)
     server.refresh(filePath)
@@ -96,14 +84,12 @@ describe 'livereload http file serving', ->
 
     ws = new WebSocket('ws://localhost:35729/livereload')
     ws.on 'message', (data, flags) ->
-      message
-      try
-        message = JSON.parse data
-        if message[0] is 'refresh'
-          message[1].path.should.equal(compiledPath)
-          server.config.server.close();
-          done()
-      catch
+      message = JSON.parse data
+      debugger;
+      if message.command is 'refresh'
+        message.path.should.equal(compiledPath)
+        server.config.server.close();
+        done()
 
     refresh = ->
       server.refresh(filePath,compileHandler)
@@ -118,12 +104,9 @@ describe 'livereload http file serving', ->
 
     ws = new WebSocket('ws://localhost:35729/livereload')
     ws.on 'message', (data, flags) ->
-      message
-      try
-        message = JSON.parse data
-        if message[0] is 'refresh'
-          refreshCalled = true
-      catch
+      message = JSON.parse data
+      if message.command is 'refresh'
+        refreshCalled = true
 
     refresh = ->
       server.refresh('',compileHandler)
@@ -136,14 +119,23 @@ describe 'livereload http file serving', ->
     setTimeout(refresh,100)
     setTimeout(testPass,200)
 
+  it 'should send hello message to client' , (done) ->
+    compileHandler = (path) ->
+      return {success:true,outputFilePath:'xxx.js'}
 
-describe 'livereload file watching', ->
+    server = livereload.createServer(port:35729,compileHandler:compileHandler)
 
-  it 'should correctly watch common files', ->
-    # TODO check it watches default exts
+    ws = new WebSocket('ws://localhost:35729/livereload')
+    ws.onopen = ->
+      ws.send {
+        command:'hello',
+        protocols: [
+          'http://livereload.com/protocols/official-6',
+          'http://livereload.com/protocols/official-7',
+          'http://livereload.com/protocols/unofficial-T7',
+      ]}
 
-  it 'should correctly ignore common exclusions', ->
-    # TODO check it ignores common exclusions
-
-  it 'should not exclude a dir named git', ->
-    # cf. issue #20
+    ws.on 'message' , (data,flags) ->
+      message = JSON.parse data
+      if message.command is 'hello'
+        done()
